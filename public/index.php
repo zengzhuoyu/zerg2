@@ -25,3 +25,9 @@ function dd($v){
     var_dump($v);
     die;
 }
+
+\think\Log::init([
+    'type' => 'File',
+    'path' => LOG_PATH,
+    'level' => ['sql']
+]);

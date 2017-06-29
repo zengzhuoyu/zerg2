@@ -12,7 +12,7 @@
 use think\Route;
 
 //获取指定id的banner信息
-Route::get('api/:version/banner/:id','api/:version.Banner/getBanner');
+Route::get('api/:version/banner/:id','api/:version.Banner/getBanner',[],['id' => '\d+']);
 //1 banner
 //多 banner_item
 
@@ -27,7 +27,7 @@ Route::get('api/:version/theme','api/:version.Theme/getSimpleList');
 //1 THEME
 
 //专题详情
-Route::get('api/:version/theme/:id','api/:version.Theme/getComplexOne');
+Route::get('api/:version/theme/:id','api/:version.Theme/getComplexOne',[],['id' => '\d+']);
 //多 theme
 //多 product
 //theme_product
@@ -37,17 +37,41 @@ Route::get('api/:version/theme/:id','api/:version.Theme/getComplexOne');
 
 //3个THEME(有一个image)拥有多个product
 
-//最近新品
-Route::get('api/:version/product/recent','api/:version.Product/getRecent');
-//分类中的商品
-Route::get('api/:version/product/by_category','api/:version.Product/getAllInCategory');
-//1 category
-//多 PRODUCT
+//商品 - 路由分组
+Route::group('api/:version/product',function(){//参数二是闭包函数
+
+    //分类中的商品
+    Route::get('/by_category','api/:version.Product/getAllInCategory');
+    //1 category
+    //多 PRODUCT
+
+    //商品详情
+    Route::get('/:id','api/:version.Product/getOne',[],['id' => '\d+']);
+//    1 PRODUCT
+//    多 product_image order排序
+
+//    1 image
+//    1 product_image
+
+//    1 product
+//    多 product_property
+
+//    一个商品有多个图片,多个属性
+
+    //最近新品
+    Route::get('/recent','api/:version.Product/getRecent');
+
+});
 
 //所有分类
 Route::get('api/:version/category/all','api/:version.Category/getAllCategories');
 //1 image
 //1 CATEGORY
+
+Route::post('api/:version/token/user','api/:version.Token/getToken');
+
+Route::post('api/:version/address','api/:version.Address/createOrUpdateAddress');
+
 
 
 

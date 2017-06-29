@@ -5,10 +5,20 @@ namespace app\api\model;
 class Product extends BaseModel
 {
     protected $hidden = [
-        'delete_time','pivot',
+        'delete_time','img_id','pivot',
         'from','category_id','create_time',
         'update_time'
     ];
+
+    public function imgs()
+    {
+        return $this->hasMany('ProductImage','product_id','id');
+    }
+
+    public function properties()
+    {
+        return $this->hasMany('ProductProperty','product_id','id');
+    }
 
     public function getMainImgUrlAttr($value,$data)
     {
@@ -30,5 +40,20 @@ class Product extends BaseModel
             ->select();
 
         return $products;
+    }
+
+    public static function getProductDetail($id)
+    {
+        //Query
+        $product = self::with([
+            'imgs' => function($query){//闭包函数
+                $query->with(['imgUrl'])
+                    ->order('order','asc');
+            }
+        ])
+            ->with(['properties'])//链式方法的with可以连接多个
+            ->find($id);
+
+        return $product;
     }
 }

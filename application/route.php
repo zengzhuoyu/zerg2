@@ -72,6 +72,23 @@ Route::post('api/:version/token/user','api/:version.Token/getToken');
 
 Route::post('api/:version/address','api/:version.Address/createOrUpdateAddress');
 
+//下单
+Route::post('api/:version/order','api/:version.Order/placeOrder');
+
+//预支付与吊起支付二维码进行支付
+Route::post('api/:version/pay/pre_order','api/:version.Pay/getPreOrder');
+
+Route::post('api/:version/pay/notify','api/:version.Pay/receiveNotify');
+
+//用户历史订单数据
+Route::get('api/:version/order/by_user','api/:version.Order/getSummaryByUser');
+
+//订单详情
+Route::get('api/:version/order/:id', 'api/:version.Order/getDetail',[], ['id'=>'\d+']);
+
+
+
+
 
 
 

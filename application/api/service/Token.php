@@ -3,6 +3,7 @@
 namespace app\api\service;
 
 use app\lib\enum\ScopeEnum;
+use app\lib\exception\ForbiddenException;
 use app\lib\exception\ParameterException;
 use app\lib\exception\TokenException;
 use think\Cache;
@@ -64,6 +65,51 @@ class Token
                 throw new Exception('尝试获取的Token变量并不存在');
             }
         }
+    }
+
+    //用户专有权限 exclusive：专有
+    public static function needExclusiveScope()
+    {
+        $scope = self::getCurrentTokenVar('scope');
+        if ($scope){
+            if ($scope == ScopeEnum::User) {
+                return true;
+            } else {
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new TokenException();
+        }
+    }
+
+    //用户、管理员权限
+    public static function needPrimaryScope()
+    {
+        $scope = self::getCurrentTokenVar('scope');
+        if ($scope) {
+            if ($scope >= ScopeEnum::User) {
+                return true;
+            }
+            else{
+                throw new ForbiddenException();
+            }
+        } else {
+            throw new TokenException();
+        }
+    }
+
+    //检测当前用户 是否等于 订单的下单用户user_id
+    public static function isValidOperate($checkUID)
+    {
+        if(!$checkUID){
+            throw new Exception('检查UID时必须传入一个被检查的UID');
+        }
+
+        $currentOperateUID = self::getCurrentUid();
+        if($currentOperateUID == $checkUID){
+            return true;
+        }
+        return false;
     }
 
 }
